@@ -20,9 +20,6 @@
 *.dylib
 *.dll
 
-# Fortran module files
-*.mod
-
 # Compiled Static libraries
 *.lai
 *.la
@@ -71,3 +68,10 @@ DerivedDataCache/*
 
 # Ignore files added by Finder on Mac
 .DS_Store
+
+# Explicitly whitelist binary files distributed in Discord GameSDK
+!Plugins/DiscordGame/Source/ThirdParty/DiscordGameSDK/*/*.bundle
+!Plugins/DiscordGame/Source/ThirdParty/DiscordGameSDK/*/*.dll
+!Plugins/DiscordGame/Source/ThirdParty/DiscordGameSDK/*/*.dylib
+!Plugins/DiscordGame/Source/ThirdParty/DiscordGameSDK/*/*.lib
+!Plugins/DiscordGame/Source/ThirdParty/DiscordGameSDK/*/*.so
