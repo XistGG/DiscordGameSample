@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "DiscordGame",
+	"Description": "Automate loading and initialization of Discord GameSDK",
+	"Category": "Other",
+	"CreatedBy": "Xist",
+	"CreatedByURL": "https://x157.github.io",
+	"DocsURL": "https://github.com/XistGG/DiscordGameSample",
+	"MarketplaceURL": "",
+	"SupportURL": "https://github.com/XistGG/DiscordGameSample",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": true,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "DiscordGame",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
