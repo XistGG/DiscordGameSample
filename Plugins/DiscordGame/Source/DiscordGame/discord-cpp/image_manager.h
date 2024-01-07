@@ -4,7 +4,7 @@
 
 namespace discord {
 
-class ImageManager final {
+class DISCORDGAME_API ImageManager final {
 public:
     ~ImageManager() = default;
 

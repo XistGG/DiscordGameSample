@@ -4,7 +4,7 @@
 
 namespace discord {
 
-class StoreManager final {
+class DISCORDGAME_API StoreManager final {
 public:
     ~StoreManager() = default;
 

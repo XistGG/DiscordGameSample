@@ -6,7 +6,7 @@
 namespace discord {
 
 template <typename... Args>
-class Event final {
+class DISCORDGAME_API Event final {
 public:
     using Token = int;
 

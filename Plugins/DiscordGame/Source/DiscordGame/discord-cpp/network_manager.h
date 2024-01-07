@@ -4,7 +4,7 @@
 
 namespace discord {
 
-class NetworkManager final {
+class DISCORDGAME_API NetworkManager final {
 public:
     ~NetworkManager() = default;
 

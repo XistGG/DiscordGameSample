@@ -4,7 +4,7 @@
 
 namespace discord {
 
-class AchievementManager final {
+class DISCORDGAME_API AchievementManager final {
 public:
     ~AchievementManager() = default;
 

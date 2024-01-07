@@ -4,7 +4,7 @@
 
 namespace discord {
 
-class UserManager final {
+class DISCORDGAME_API UserManager final {
 public:
     ~UserManager() = default;
 

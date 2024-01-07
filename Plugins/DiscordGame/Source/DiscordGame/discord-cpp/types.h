@@ -220,7 +220,7 @@ using MSG = void;
 using Path = char const*;
 using DateTime = char const*;
 
-class User final {
+class DISCORDGAME_API User final {
 public:
     void SetId(UserId id);
     UserId GetId() const;
@@ -237,7 +237,7 @@ private:
     DiscordUser internal_;
 };
 
-class OAuth2Token final {
+class DISCORDGAME_API OAuth2Token final {
 public:
     void SetAccessToken(char const* accessToken);
     char const* GetAccessToken() const;
@@ -250,7 +250,7 @@ private:
     DiscordOAuth2Token internal_;
 };
 
-class ImageHandle final {
+class DISCORDGAME_API ImageHandle final {
 public:
     void SetType(ImageType type);
     ImageType GetType() const;
@@ -263,7 +263,7 @@ private:
     DiscordImageHandle internal_;
 };
 
-class ImageDimensions final {
+class DISCORDGAME_API ImageDimensions final {
 public:
     void SetWidth(std::uint32_t width);
     std::uint32_t GetWidth() const;
@@ -274,7 +274,7 @@ private:
     DiscordImageDimensions internal_;
 };
 
-class ActivityTimestamps final {
+class DISCORDGAME_API ActivityTimestamps final {
 public:
     void SetStart(Timestamp start);
     Timestamp GetStart() const;
@@ -285,7 +285,7 @@ private:
     DiscordActivityTimestamps internal_;
 };
 
-class ActivityAssets final {
+class DISCORDGAME_API ActivityAssets final {
 public:
     void SetLargeImage(char const* largeImage);
     char const* GetLargeImage() const;
@@ -300,7 +300,7 @@ private:
     DiscordActivityAssets internal_;
 };
 
-class PartySize final {
+class DISCORDGAME_API PartySize final {
 public:
     void SetCurrentSize(std::int32_t currentSize);
     std::int32_t GetCurrentSize() const;
@@ -311,7 +311,7 @@ private:
     DiscordPartySize internal_;
 };
 
-class ActivityParty final {
+class DISCORDGAME_API ActivityParty final {
 public:
     void SetId(char const* id);
     char const* GetId() const;
@@ -324,7 +324,7 @@ private:
     DiscordActivityParty internal_;
 };
 
-class ActivitySecrets final {
+class DISCORDGAME_API ActivitySecrets final {
 public:
     void SetMatch(char const* match);
     char const* GetMatch() const;
@@ -337,7 +337,7 @@ private:
     DiscordActivitySecrets internal_;
 };
 
-class Activity final {
+class DISCORDGAME_API Activity final {
 public:
     void SetType(ActivityType type);
     ActivityType GetType() const;
@@ -366,7 +366,7 @@ private:
     DiscordActivity internal_;
 };
 
-class Presence final {
+class DISCORDGAME_API Presence final {
 public:
     void SetStatus(Status status);
     Status GetStatus() const;
@@ -377,7 +377,7 @@ private:
     DiscordPresence internal_;
 };
 
-class Relationship final {
+class DISCORDGAME_API Relationship final {
 public:
     void SetType(RelationshipType type);
     RelationshipType GetType() const;
@@ -390,7 +390,7 @@ private:
     DiscordRelationship internal_;
 };
 
-class Lobby final {
+class DISCORDGAME_API Lobby final {
 public:
     void SetId(LobbyId id);
     LobbyId GetId() const;
@@ -409,7 +409,7 @@ private:
     DiscordLobby internal_;
 };
 
-class ImeUnderline final {
+class DISCORDGAME_API ImeUnderline final {
 public:
     void SetFrom(std::int32_t from);
     std::int32_t GetFrom() const;
@@ -426,7 +426,7 @@ private:
     DiscordImeUnderline internal_;
 };
 
-class Rect final {
+class DISCORDGAME_API Rect final {
 public:
     void SetLeft(std::int32_t left);
     std::int32_t GetLeft() const;
@@ -441,7 +441,7 @@ private:
     DiscordRect internal_;
 };
 
-class FileStat final {
+class DISCORDGAME_API FileStat final {
 public:
     void SetFilename(char const* filename);
     char const* GetFilename() const;
@@ -454,7 +454,7 @@ private:
     DiscordFileStat internal_;
 };
 
-class Entitlement final {
+class DISCORDGAME_API Entitlement final {
 public:
     void SetId(Snowflake id);
     Snowflake GetId() const;
@@ -467,7 +467,7 @@ private:
     DiscordEntitlement internal_;
 };
 
-class SkuPrice final {
+class DISCORDGAME_API SkuPrice final {
 public:
     void SetAmount(std::uint32_t amount);
     std::uint32_t GetAmount() const;
@@ -478,7 +478,7 @@ private:
     DiscordSkuPrice internal_;
 };
 
-class Sku final {
+class DISCORDGAME_API Sku final {
 public:
     void SetId(Snowflake id);
     Snowflake GetId() const;
@@ -493,7 +493,7 @@ private:
     DiscordSku internal_;
 };
 
-class InputMode final {
+class DISCORDGAME_API InputMode final {
 public:
     void SetType(InputModeType type);
     InputModeType GetType() const;
@@ -504,7 +504,7 @@ private:
     DiscordInputMode internal_;
 };
 
-class UserAchievement final {
+class DISCORDGAME_API UserAchievement final {
 public:
     void SetUserId(Snowflake userId);
     Snowflake GetUserId() const;
@@ -519,7 +519,7 @@ private:
     DiscordUserAchievement internal_;
 };
 
-class LobbyTransaction final {
+class DISCORDGAME_API LobbyTransaction final {
 public:
     Result SetType(LobbyType type);
     Result SetOwner(UserId ownerId);
@@ -535,7 +535,7 @@ private:
     IDiscordLobbyTransaction* internal_;
 };
 
-class LobbyMemberTransaction final {
+class DISCORDGAME_API LobbyMemberTransaction final {
 public:
     Result SetMetadata(MetadataKey key, MetadataValue value);
     Result DeleteMetadata(MetadataKey key);
@@ -547,7 +547,7 @@ private:
     IDiscordLobbyMemberTransaction* internal_;
 };
 
-class LobbySearchQuery final {
+class DISCORDGAME_API LobbySearchQuery final {
 public:
     Result Filter(MetadataKey key,
                   LobbySearchComparison comparison,

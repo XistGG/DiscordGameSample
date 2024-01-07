@@ -4,7 +4,7 @@
 
 namespace discord {
 
-class LobbyManager final {
+class DISCORDGAME_API LobbyManager final {
 public:
     ~LobbyManager() = default;
 

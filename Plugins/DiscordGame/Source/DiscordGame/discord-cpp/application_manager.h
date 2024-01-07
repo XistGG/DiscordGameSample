@@ -4,7 +4,7 @@
 
 namespace discord {
 
-class ApplicationManager final {
+class DISCORDGAME_API ApplicationManager final {
 public:
     ~ApplicationManager() = default;
 

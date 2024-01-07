@@ -16,7 +16,7 @@
 
 namespace discord {
 
-class Core final {
+class DISCORDGAME_API Core final {
 public:
     static Result Create(ClientId clientId, std::uint64_t flags, Core** instance);
 

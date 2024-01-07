@@ -4,7 +4,7 @@
 
 namespace discord {
 
-class ActivityManager final {
+class DISCORDGAME_API ActivityManager final {
 public:
     ~ActivityManager() = default;
 

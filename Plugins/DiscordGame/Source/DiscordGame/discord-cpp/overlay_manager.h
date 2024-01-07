@@ -4,7 +4,7 @@
 
 namespace discord {
 
-class OverlayManager final {
+class DISCORDGAME_API OverlayManager final {
 public:
     ~OverlayManager() = default;
 

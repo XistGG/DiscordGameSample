@@ -4,7 +4,7 @@
 
 namespace discord {
 
-class VoiceManager final {
+class DISCORDGAME_API VoiceManager final {
 public:
     ~VoiceManager() = default;
 

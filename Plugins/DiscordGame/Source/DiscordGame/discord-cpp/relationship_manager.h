@@ -4,7 +4,7 @@
 
 namespace discord {
 
-class RelationshipManager final {
+class DISCORDGAME_API RelationshipManager final {
 public:
     ~RelationshipManager() = default;
 

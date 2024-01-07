@@ -4,7 +4,7 @@
 
 namespace discord {
 
-class StorageManager final {
+class DISCORDGAME_API StorageManager final {
 public:
     ~StorageManager() = default;
 
