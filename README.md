@@ -5,13 +5,25 @@ This is a sample game that integrates UE 5.3 with
 [Discord GameSDK](https://discord.com/developers/docs/game-sdk/sdk-starter-guide)
 v3.2.1.
 
-## DiscordGame Plugin
+To see this in action, build and run the game.
+As soon as the game (or UEditor) starts, if you have Discord running on your machine,
+your Discord status will be updated to show that you're running the game.
+
+## Required Setup Steps
+
+- [Setup Part 1: Installing the SDK](#setup-part-1-installing-the-sdk)
+- [Setup Part 2: Exporting the SDK](#setup-part-2-exporting-the-sdk)
+
+## Example Discord Status
+[!./Resources/XistDiscordStatus.png](./Resources/XistDiscordStatus.png)
+
+# DiscordGame Plugin
 
 The primary point of interest in this repository is the
 [DiscordGame](./Plugins/DiscordGame/)
 plugin, which contains 2 modules:
 
-### `DiscordGame` Module
+## `DiscordGame` Module
 
 - Implements `DiscordGameSubsystem`
   { [h](./Plugins/DiscordGame/Source/DiscordGame/DiscordGameSubsystem.h) |
@@ -19,11 +31,27 @@ plugin, which contains 2 modules:
 - Dynamically loads `DiscordGameSDK` at runtime (see [DiscordGame.cpp](./Plugins/DiscordGame/Source/DiscordGame/DiscordGame.cpp))
   - DLL paths must be coordinated with [DiscordGameSDK.Build.cs](./Plugins/DiscordGame/Source/ThirdParty/DiscordGameSDK/DiscordGameSDK.Build.cs)
 
-### `DiscordGameSDK` ThirdParty Module
+## `DiscordGameSDK` ThirdParty Module
 
 - ThirdParty Module containing Discord GameSDK distributable DLLs
 
-# Setup: Installing the SDK
+# Custom Discord Game Subsystem
+
+Though the underlying `UDiscordGameSubsystem` does all of the actual work of loading the SDK
+and managing the connection to the `DiscordCore`, it doesn't actually implement any gameplay behavior.
+
+The `UCustomDiscordGameSubsystem`
+{ [h](./DiscordGameSample/Source/DiscordGameSample/CustomDiscordGameSubsystem.h)
+| [cpp](./DiscordGameSample/Source/DiscordGameSample/CustomDiscordGameSubsystem.cpp)
+}
+is an example of the kind of custom subsystem you can make for your game,
+where you will implement whatever behavior you want.
+
+In this case, it automatically sets the Discord Rich Presence
+as soon as we're able to connect to Discord, and it unsets it
+when the game ends.
+
+# Setup Part 1: Installing the SDK
 
 Current Discord GameSDK version: `v3.2.1`
 
@@ -48,3 +76,68 @@ then you can use the binaries I committed to this repository.
 
 I am not responsible for your computer melting down or any other things that may happen
 as a result of you executing binaries that you downloaded from the Internet.
+
+# Setup Part 2: Exporting the SDK
+
+After you install the latest SDK, you also need to export all of the classes so you can use them in
+other UE5 modules.
+
+You can do this manually, however I created a simple PowerShell script
+([ExportGameSDK.ps1](./ExportGameSDK.ps1))
+to automate this process.
+
+To run it for real and modify the Discord GameSDK C++ headers, run it like:
+
+```powershell
+ExportGameSDK.ps1
+```
+
+You can also execute `ExportGameSDK.ps1` in a debug test mode such that it **will not** make any modifications,
+and instead will only show you what it would really do:
+
+```powershell
+ExportGameSDK.ps1 -Debug -DryRun
+```
+
+### Example output from -Debug -DryRun
+[!./Resources/PSDebugDryRun.png](./Resources/PSDebugDryRun.png)
+
+*(The actual output is a few screen lengths)*
+
+## Possible Compilation (Linker) Errors
+
+If you fail to export the SDK's C++ classes, when you try to use them in your own UE5 module,
+during compilation you will see linker errors such as this:
+
+```text
+LNK2019: unresolved external symbol "public: void __cdecl discord::ActivityAssets::SetLargeImage(char const *)" (?SetLargeImage@ActivityAssets@discord@@QEAAXPEBD@Z) referenced in function "public: bool __cdecl UCustomDiscordGameSubsystem::UpdateActivity(void)" (?UpdateActivity@UCustomDiscordGameSubsystem@@QEAA_NXZ)
+LNK2019: unresolved external symbol "public: class discord::PartySize & __cdecl discord::ActivityParty::GetSize(void)" (?GetSize@ActivityParty@discord@@QEAAAEAVPartySize@2@XZ) referenced in function "public: bool __cdecl UCustomDiscordGameSubsystem::UpdateActivity(void)" (?UpdateActivity@UCustomDiscordGameSubsystem@@QEAA_NXZ)
+LNK2019: unresolved external symbol "public: void __cdecl discord::Activity::SetState(char const *)" (?SetState@Activity@discord@@QEAAXPEBD@Z) referenced in function "public: bool __cdecl UCustomDiscordGameSubsystem::UpdateActivity(void)" (?UpdateActivity@UCustomDiscordGameSubsystem@@QEAA_NXZ)
+LNK2019: unresolved external symbol "public: class discord::ActivityManager & __cdecl discord::Core::ActivityManager(void)" (?ActivityManager@Core@discord@@QEAAAEAV02@XZ) referenced in function "public: void __cdecl UCustomDiscordGameSubsystem::ClearActivity(void)" (?ClearActivity@UCustomDiscordGameSubsystem@@QEAAXXZ)
+```
+
+To fix these errors, execute [`ExportGameSDK.ps1`](./ExportGameSDK.ps1) and compile again.
+
+# Possible Compilation Warnings
+
+When you compile this, you may see a lot of warnings such as this:
+
+```text
+0>types.cpp(24): Warning C4996 : 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+```
+
+These warnings are due to Discord GameSDK being ultimately written in C and using C memory copy methodologies,
+which is generally not something you want to do in a C++ project.
+
+This isn't really a problem as Discord has taken care to ensure that buffer overruns won't actually result from
+using these methodologies. You can safely ignore these warnings.
+
+## Optional: Silence Expected Compilation Warnings
+
+I was able to squelch these warnings in these modules by adding this line to my `Build.cs`,
+which you can optionally do in your own project:
+
+```c#
+// Squelch compiler warnings RE Discord's use of `strncpy`
+PublicDefinitions.Add("_CRT_SECURE_NO_WARNINGS");
+```
