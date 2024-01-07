@@ -16,9 +16,5 @@ public class DiscordGameSample : ModuleRules
 			"Engine",
 			"InputCore",
 		});
-
-		PrivateDependencyModuleNames.AddRange(new string[]
-		{
-		});
 	}
 }
