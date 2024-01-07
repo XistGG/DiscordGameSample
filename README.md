@@ -15,7 +15,7 @@ your Discord status will be updated to show that you're running the game.
 - [Setup Part 2: Exporting the SDK](#setup-part-2-exporting-the-sdk)
 
 ## Example Discord Status
-[!./Resources/XistDiscordStatus.png](./Resources/XistDiscordStatus.png)
+[![Example Screenshot](./Resources/XistDiscordStatus.png)](./Resources/XistDiscordStatus.png)
 
 # DiscordGame Plugin
 
@@ -41,8 +41,8 @@ Though the underlying `UDiscordGameSubsystem` does all of the actual work of loa
 and managing the connection to the `DiscordCore`, it doesn't actually implement any gameplay behavior.
 
 The `UCustomDiscordGameSubsystem`
-{ [h](./DiscordGameSample/Source/DiscordGameSample/CustomDiscordGameSubsystem.h)
-| [cpp](./DiscordGameSample/Source/DiscordGameSample/CustomDiscordGameSubsystem.cpp)
+{ [h](./Source/DiscordGameSample/CustomDiscordGameSubsystem.h)
+| [cpp](./Source/DiscordGameSample/CustomDiscordGameSubsystem.cpp)
 }
 is an example of the kind of custom subsystem you can make for your game,
 where you will implement whatever behavior you want.
@@ -100,7 +100,7 @@ ExportGameSDK.ps1 -Debug -DryRun
 ```
 
 ### Example output from -Debug -DryRun
-[!./Resources/PSDebugDryRun.png](./Resources/PSDebugDryRun.png)
+[![-Debug -DryRun Terminal Screenshot](./Resources/PSDebugDryRun.png)](./Resources/PSDebugDryRun.png)
 
 *(The actual output is a few screen lengths)*
 
@@ -131,13 +131,3 @@ which is generally not something you want to do in a C++ project.
 
 This isn't really a problem as Discord has taken care to ensure that buffer overruns won't actually result from
 using these methodologies. You can safely ignore these warnings.
-
-## Optional: Silence Expected Compilation Warnings
-
-I was able to squelch these warnings in these modules by adding this line to my `Build.cs`,
-which you can optionally do in your own project:
-
-```c#
-// Squelch compiler warnings RE Discord's use of `strncpy`
-PublicDefinitions.Add("_CRT_SECURE_NO_WARNINGS");
-```
