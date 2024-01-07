@@ -13,6 +13,7 @@ public class DiscordGameSample : ModuleRules
 		{
 			"Core",
 			"CoreUObject",
+			"DiscordGame",
 			"Engine",
 			"InputCore",
 		});

@@ -3,92 +3,55 @@
 #include "DiscordGameSubsystem.h"
 #include "DiscordGame.h"
 
+UDiscordGameSubsystem::UDiscordGameSubsystem()
+{
+	// You need to override these settings in your derived subsystem.
+	// These should be configured for your own game:
+	ClientId = 1192487163825246269;
+	MinimumLogLevel = discord::LogLevel::Debug;
+	CreateRetryTime = 0.5f;
+}
+
+bool UDiscordGameSubsystem::ShouldCreateSubsystem(UObject* Outer) const
+{
+	TArray<UClass*> ChildClasses;
+	GetDerivedClasses(GetClass(), OUT ChildClasses, false);
+
+	UE_LOG(LogDiscord, Log, TEXT("Found %i derived classes when attemping to create DiscordGameSubsystem (%s)"), ChildClasses.Num(), *GetClass()->GetName());
+
+	// Only create an instance if there is no override implementation defined elsewhere
+	return ChildClasses.Num() == 0;
+}
+
 void UDiscordGameSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
 	DiscordGameModule = FDiscordGameModule::Get();
-	TickDelegateHandle = FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateUObject(this, &ThisClass::Tick));
+	SetTickEnabled(true);
 }
 
 void UDiscordGameSubsystem::Deinitialize()
 {
-	ClearActivity();
-
-	FTSTicker::GetCoreTicker().RemoveTicker(TickDelegateHandle);
+	SetTickEnabled(false);
 	ResetDiscordCore();
 	DiscordGameModule = nullptr;
 	Super::Deinitialize();
 }
 
-bool UDiscordGameSubsystem::UpdateActivity()
-{
-	bool bResult {false};
-
-	if (IsDiscordRunning())
-	{
-		bResult = true;
-
-		discord::Activity Activity {};
-		Activity.SetType(discord::ActivityType::Playing);
-		Activity.SetApplicationId(ClientId);
-		Activity.SetName("NameHere");  // TODO HARDCODED
-		Activity.SetState("StateHere");  // TODO HARDCODED
-		Activity.SetDetails("DetailsHere");  // TODO HARDCODED
-		Activity.SetSupportedPlatforms(static_cast<uint32_t>(discord::ActivitySupportedPlatformFlags::Desktop));
-
-		discord::ActivityTimestamps& Timestamps = Activity.GetTimestamps();
-		Timestamps.SetStart(FDateTime::UtcNow().ToUnixTimestamp());
-
-		discord::ActivityAssets& Assets = Activity.GetAssets();
-		Assets.SetLargeImage("favicon-1024");  // TODO HARDCODED
-		Assets.SetLargeText("LargeText");  // TODO HARDCODED
-		Assets.SetSmallImage("favicon-1024");  // TODO HARDCODED
-		Assets.SetSmallText("LargeText");  // TODO HARDCODED
-
-		discord::ActivityParty& Party = Activity.GetParty();
-		Party.SetId("1234-5678-9012-3456-7890");  // TODO HARDCODED
-		Party.SetPrivacy(discord::ActivityPartyPrivacy::Public);  // TODO HARDCODED
-		discord::PartySize& PartySize = Party.GetSize();
-		PartySize.SetCurrentSize(1);  // TODO HARDCODED
-		PartySize.SetMaxSize(3);  // TODO HARDCODED
-
-		discord::ActivitySecrets& Secrets = Activity.GetSecrets();
-		// TODO Secrets info
-
-		DiscordCore->ActivityManager().UpdateActivity(Activity, [this](discord::Result Result)
-		{
-			const FString RequestDescription (TEXT("Updating Activity"));
-			LogDiscordResult(Result, RequestDescription);
-		});
-	}
-
-	return bResult;
-}
-
-void UDiscordGameSubsystem::ClearActivity()
-{
-	if (IsDiscordRunning())
-	{
-		DiscordCore->ActivityManager().ClearActivity([this](discord::Result Result)
-		{
-			const FString RequestDescription (TEXT("Clearing Activity"));
-			LogDiscordResult(Result, RequestDescription);
-		});
-	}
-}
-
 void UDiscordGameSubsystem::NativeOnDiscordCoreCreated()
 {
-	check(DiscordCore);
+	check(DiscordCorePtr);
 
-	DiscordCore->SetLogHook(MinimumLogLevel, [this](discord::LogLevel Level, const char* RawMessage)
+	DiscordCorePtr->SetLogHook(MinimumLogLevel, [this](discord::LogLevel Level, const char* RawMessage)
 	{
-		const FString Message (RawMessage);
+		const FString Message (UTF8_TO_TCHAR(RawMessage));
 		NativeOnDiscordLogMessage(Level, Message);
 	});
+}
 
-	UpdateActivity();
+void UDiscordGameSubsystem::NativeOnDiscordCoreReset()
+{
 }
 
 void UDiscordGameSubsystem::NativeOnDiscordLogMessage(discord::LogLevel Level, const FString& Message) const
@@ -124,11 +87,26 @@ void UDiscordGameSubsystem::LogDiscordResult(discord::Result Result, const FStri
 	}
 }
 
+void UDiscordGameSubsystem::SetTickEnabled(bool bWantTicking)
+{
+	if (bWantTicking && !TickDelegateHandle.IsValid())
+	{
+		// Want to enable ticking and it is not currently enabled
+		TickDelegateHandle = FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateUObject(this, &ThisClass::Tick));
+	}
+	else if (!bWantTicking && TickDelegateHandle.IsValid())
+	{
+		// Want to disable ticking and it is currently enabled
+		FTSTicker::GetCoreTicker().RemoveTicker(TickDelegateHandle);
+		TickDelegateHandle.Reset();
+	}
+}
+
 bool UDiscordGameSubsystem::Tick(float DeltaTime)
 {
 	if (IsDiscordRunning())
 	{
-		const discord::Result Result = DiscordCore->RunCallbacks();
+		const discord::Result Result = DiscordCorePtr->RunCallbacks();
 		switch (Result)
 		{
 		case discord::Result::Ok:
@@ -166,7 +144,7 @@ void UDiscordGameSubsystem::TryCreateDiscordCore(float DeltaTime)
 
 	if (RetryWaitRemaining <= 0.f)
 	{
-		switch (const discord::Result Result = discord::Core::Create(ClientId, DiscordCreateFlags_NoRequireDiscord, &DiscordCore))
+		switch (const discord::Result Result = discord::Core::Create(ClientId, DiscordCreateFlags_NoRequireDiscord, &DiscordCorePtr))
 		{
 		case discord::Result::Ok:
 			UE_LOG(LogDiscord, Log, TEXT("Created Discord Core"));
@@ -189,12 +167,15 @@ void UDiscordGameSubsystem::TryCreateDiscordCore(float DeltaTime)
 
 void UDiscordGameSubsystem::ResetDiscordCore()
 {
-	if (DiscordCore)
+	if (DiscordCorePtr)
 	{
 		// Discord GameSDK doesn't provide any way to free memory !?
 		// It allocates memory with new(), so here we will delete.
-		delete DiscordCore;
-		DiscordCore = nullptr;
+		delete DiscordCorePtr;
+		DiscordCorePtr = nullptr;
+
+		// Allow child classes the opportunity to react to this event
+		NativeOnDiscordCoreReset();
 	}
 
 	// Ensure that next tick we'll immediately try reconnecting (if still ticking)
