@@ -86,6 +86,10 @@ You can do this manually, however I created a simple PowerShell script
 ([ExportGameSDK.ps1](./ExportGameSDK.ps1))
 to automate this process.
 
+To see exactly what this script does to the source, see
+[this commit](https://github.com/XistGG/DiscordGameSample/commit/f04bf48ea39ae1160a629c4b965dc816cc0f4952)
+where I modified the downloaded SDK headers with this script.
+
 To run it for real and modify the Discord GameSDK C++ headers, run it like:
 
 ```powershell
