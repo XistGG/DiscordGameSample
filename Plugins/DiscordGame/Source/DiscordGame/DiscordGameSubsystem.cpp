@@ -9,7 +9,7 @@ UDiscordGameSubsystem::UDiscordGameSubsystem()
 	// These should be configured for your own game:
 	ClientId = 1192487163825246269;
 	MinimumLogLevel = discord::LogLevel::Debug;
-	CreateRetryTime = 0.5f;
+	CreateRetryTime = 5.0f;
 }
 
 bool UDiscordGameSubsystem::ShouldCreateSubsystem(UObject* Outer) const
@@ -132,6 +132,9 @@ bool UDiscordGameSubsystem::Tick(float DeltaTime)
 	}
 	else if (IsDiscordSDKLoaded())
 	{
+		// Discord is not running, but we do have the SDK loaded.
+		// Try to reconnect to DiscordCore.
+
 		TryCreateDiscordCore(DeltaTime);
 	}
 
