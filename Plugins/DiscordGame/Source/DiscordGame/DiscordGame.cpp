@@ -33,9 +33,12 @@ void FDiscordGameModule::StartupModule()
 
 void FDiscordGameModule::ShutdownModule()
 {
-	// Free the dll handle
-	FPlatformProcess::FreeDllHandle(DiscordGameSDKHandle);
-	DiscordGameSDKHandle = nullptr;
+	if (DiscordGameSDKHandle)
+	{
+		// Free the dll handle
+		FPlatformProcess::FreeDllHandle(DiscordGameSDKHandle);
+		DiscordGameSDKHandle = nullptr;
+	}
 }
 
 FString FDiscordGameModule::GetPathToDLL() const
