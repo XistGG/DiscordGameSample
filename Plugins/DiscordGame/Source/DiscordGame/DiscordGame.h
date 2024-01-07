@@ -9,7 +9,6 @@ DECLARE_LOG_CATEGORY_EXTERN(LogDiscord, Log, All);
 class FDiscordGameModule : public IModuleInterface
 {
 public:
-
 	/** Name of this module */
 	static const FName ModuleName;
 
@@ -26,11 +25,16 @@ public:
 	 */
 	FORCEINLINE bool IsDiscordSDKLoaded() const { return DiscordGameSDKHandle != nullptr; }
 
-	/** IModuleInterface implementation */
+	//~IModuleInterface interface
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
+	//~End of IModuleInterface interface
 
 protected:
+	/**
+	 * Get the path to the Discord GameSDK DLL for the current platform.
+	 * @return Absolute path to the Discord GameSDK DLL we need to load
+	 */
 	FString GetPathToDLL() const;
 
 private:
