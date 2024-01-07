@@ -9,10 +9,6 @@ public class DiscordGame : ModuleRules
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		bUseUnity = false;
 
-		PublicIncludePaths.AddRange(new string[]
-		{
-		});
-
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
 			"Core",
