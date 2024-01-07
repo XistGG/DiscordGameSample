@@ -6,7 +6,7 @@ public class DiscordGame : ModuleRules
 {
 	public DiscordGame(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 		bUseUnity = false;
 
 		PublicDependencyModuleNames.AddRange(new string[]
