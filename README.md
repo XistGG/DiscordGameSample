@@ -9,12 +9,24 @@ To see this in action, build and run the game.
 As soon as the game (or UEditor) starts, if you have Discord running on your machine,
 your Discord status will be updated to show that you're running the game.
 
-## Required Setup Steps
+## How to Use the `DiscordGame` Plugin in your Game
+
+- Update the SDK to the latest (see [Updating Discord GameSDK](#updating-discord-gamesdk))
+- Copy the entire `Plugins/DiscordGame` folder into your project
+- Add `DiscordGame` to `PublicDependencyModuleNames` in your `Build.cs`
+- Create your own Custom Discord Game Subsystem, using `UCustomDiscordGameSubsystem`
+  { [h](./Source/DiscordGameSample/CustomDiscordGameSubsystem.h)
+  | [cpp](./Source/DiscordGameSample/CustomDiscordGameSubsystem.cpp)
+  } as an example starting point
+- Add whatever gameplay hooks you want, you're now online with Discord!
+
+## Updating Discord GameSDK
 
 - [Setup Part 1: Installing the SDK](#setup-part-1-installing-the-sdk)
 - [Setup Part 2: Exporting the SDK](#setup-part-2-exporting-the-sdk)
 
 ## Example Discord Status
+
 [![Example Screenshot](./Resources/XistDiscordStatus.png)](./Resources/XistDiscordStatus.png)
 
 # DiscordGame Plugin
