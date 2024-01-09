@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 xist.gg
+// Copyright (c) 2024 xist.gg
 
 #include "CustomDiscordGameSubsystem.h"
 
@@ -18,8 +18,8 @@ void UCustomDiscordGameSubsystem::NativeOnDiscordCoreCreated()
 
 void UCustomDiscordGameSubsystem::NativeOnDiscordCoreReset()
 {
-	// Clear out any "Discord Rich Presence" (if any) when we're disconnecting from Discord
-	ClearActivity();
+	// Do whatever you need to do to cleanup when the DiscordCore becomes invalid.
+	// By the time this is called, Discord is no longer connected and it has already been reset.
 
 	Super::NativeOnDiscordCoreReset();
 }
@@ -69,10 +69,15 @@ bool UCustomDiscordGameSubsystem::UpdateActivity()
 	return bResult;
 }
 
+#if false
 void UCustomDiscordGameSubsystem::ClearActivity()
 {
 	if (IsDiscordRunning())
 	{
+		// ClearActivity DOES NOT WORK as of Discord GameSDK 3.2.1
+		//
+		// @see https://github.com/discord/discord-api-docs/issues/6612
+		//
 		DiscordCore().ActivityManager().ClearActivity([this](discord::Result Result)
 		{
 			const FString RequestDescription (TEXT("Clearing Activity"));
@@ -80,3 +85,4 @@ void UCustomDiscordGameSubsystem::ClearActivity()
 		});
 	}
 }
+#endif

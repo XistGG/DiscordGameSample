@@ -38,6 +38,11 @@ public:
 	//~End of UDiscordGameSubsystem interface
 
 	bool UpdateActivity();
+
+#if false
+	// ClearActivity DOES NOT WORK as of Discord GameSDK 3.2.1
+	// @see https://github.com/discord/discord-api-docs/issues/6612
 	void ClearActivity();
+#endif
 
 };
