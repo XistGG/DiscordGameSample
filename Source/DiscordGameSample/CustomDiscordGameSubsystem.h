@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 xist.gg
+// Copyright (c) 2024 xist.gg
 
 #pragma once
 
@@ -18,6 +18,17 @@ class DISCORDGAMESAMPLE_API UCustomDiscordGameSubsystem : public UDiscordGameSub
 	GENERATED_BODY()
 
 public:
+	/** Get this subsystem, if the Engine exists, else nullptr */
+	static UCustomDiscordGameSubsystem* Get() { return Cast<UCustomDiscordGameSubsystem>(UDiscordGameSubsystem::Get()); }
+
+	/** Get this subsystem, making SURE we got one. */
+	static UCustomDiscordGameSubsystem* GetChecked()
+	{
+		UCustomDiscordGameSubsystem* Subsystem = Get();
+		check(Subsystem);
+		return Subsystem;
+	}
+
 	// Set Class Defaults
 	UCustomDiscordGameSubsystem();
 
