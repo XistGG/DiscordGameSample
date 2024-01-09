@@ -30,6 +30,9 @@ class DISCORDGAME_API UDiscordGameSubsystem : public UEngineSubsystem
 	GENERATED_BODY()
 
 public:
+	/** Get this subsystem, if the Engine exists, else nullptr */
+	static UDiscordGameSubsystem* Get() { return GEngine ? GEngine->GetEngineSubsystem<UDiscordGameSubsystem>() : nullptr; }
+
 	// Set Class Defaults
 	UDiscordGameSubsystem();
 
