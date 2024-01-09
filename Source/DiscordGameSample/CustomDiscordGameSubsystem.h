@@ -1,4 +1,4 @@
-// Copyright (c) 2024 xist.gg
+﻿// Copyright (c) 2024 xist.gg
 
 #pragma once
 
@@ -37,6 +37,7 @@ public:
 	virtual void NativeOnDiscordCoreReset() override;
 	//~End of UDiscordGameSubsystem interface
 
+	/** Update Discord's Rich Presence Activity info */
 	bool UpdateActivity();
 
 #if false
