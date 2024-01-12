@@ -185,8 +185,13 @@ void UDiscordGameSubsystem::ResetDiscordCore()
 	if (DiscordCorePtr)
 	{
 		// Discord GameSDK doesn't provide any way to free memory !?
-		// It allocates memory with new(), so here we will delete.
-		delete DiscordCorePtr;
+		//
+		// It allocates memory with new() and it does not provide any way for us to free that memory.
+		// If we explicitly delete, we sometimes get fatal Exception 0xc0000008, so we cannot do that.
+		// Here we just have to hope that Discord isn't bad and they free the memory on fatal errors.
+		// There may be a minor memory leak here, but this shouldn't happen often during the game.
+		//
+		//-- delete DiscordCorePtr;
 		DiscordCorePtr = nullptr;
 
 		// Allow child classes the opportunity to react to this event
