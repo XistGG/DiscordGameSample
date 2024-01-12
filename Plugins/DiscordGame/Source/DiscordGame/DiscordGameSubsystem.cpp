@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 xist.gg
+// Copyright (c) 2024 xist.gg
 
 #include "DiscordGameSubsystem.h"
 #include "DiscordGame.h"
@@ -27,8 +27,20 @@ void UDiscordGameSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
+	// Before we do anything else, grab a handle to the DiscordGame module
 	DiscordGameModule = FDiscordGameModule::Get();
-	SetTickEnabled(true);
+
+	// Only enable subsystem ticking if the SDK was successfully loaded
+	if (IsDiscordSDKLoaded())
+	{
+		UE_LOG(LogDiscord, Log, TEXT("SDK loaded, enabling subsystem ticking"));
+
+		SetTickEnabled(true);
+	}
+	else
+	{
+		UE_LOG(LogDiscord, Error, TEXT("SDK load failed, disabling subsystem"));
+	}
 }
 
 void UDiscordGameSubsystem::Deinitialize()
