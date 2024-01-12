@@ -22,8 +22,9 @@ public class DiscordGameSDK : ModuleRules
         }
         else if (Target.Platform == UnrealTargetPlatform.Mac)
         {
-            PublicDelayLoadDLLs.Add(Path.Combine(ModuleDirectory, "x86_64", "discord_game_sdk.dylib"));
-            RuntimeDependencies.Add("$(TargetOutputDir)/discord_game_sdk.dylib", "$(PluginDir)/Source/ThirdParty/DiscordGameSDK/x86_64/discord_game_sdk.dylib");
+	        string ArchDir = (Target.Architecture.ToString() == "x86_64") ? "x86_64" : "aarch64";
+            PublicDelayLoadDLLs.Add(Path.Combine(ModuleDirectory, ArchDir, "discord_game_sdk.dylib"));
+            RuntimeDependencies.Add("$(TargetOutputDir)/discord_game_sdk.dylib", Path.Combine("$(PluginDir)/Source/ThirdParty/DiscordGameSDK", ArchDir, "discord_game_sdk.dylib"));
         }
         else if (Target.Platform == UnrealTargetPlatform.Linux)
 		{

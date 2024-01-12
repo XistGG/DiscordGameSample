@@ -56,8 +56,10 @@ FString FDiscordGameModule::GetPathToDLL() const
 
 #if PLATFORM_WINDOWS
 	LibraryPath = FPaths::Combine(*LibraryPath, TEXT("x86_64/discord_game_sdk.dll"));
+#elif PLATFORM_MAC && defined(__aarch64__) 
+	LibraryPath = FPaths::Combine(*LibraryPath, TEXT("aarch64/discord_game_sdk.dylib"));
 #elif PLATFORM_MAC
-	LibraryPath = FPaths::Combine(*LibraryPath, TEXT("x86_64/discord_game_sdk.dylib"));  // or aarch64?
+	LibraryPath = FPaths::Combine(*LibraryPath, TEXT("x86_64/discord_game_sdk.dylib"));
 #elif PLATFORM_LINUX
 	LibraryPath = FPaths::Combine(*LibraryPath, TEXT("x86_64/discord_game_sdk.so"));
 #endif
