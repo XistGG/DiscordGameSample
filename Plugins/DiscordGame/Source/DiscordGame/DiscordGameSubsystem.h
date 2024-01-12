@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 xist.gg
+// Copyright (c) 2024 xist.gg
 
 #pragma once
 
@@ -23,8 +23,14 @@
  * 
  * @see https://github.com/XistGG/DiscordGameSample/Source/DiscordGameSample/CustomDiscordGameSubsystem.h
  * @see https://github.com/XistGG/DiscordGameSample/Source/DiscordGameSample/CustomDiscordGameSubsystem.cpp
+ *
+ * If you prefer, you can configure this in DefaultGame.ini by setting some INI such as:
+ *
+ *   [/Script/DiscordGame.DiscordGameSubsystem]
+ *   ClientId=1192487163825246269
+ *   CreateRetryTime=5.0
  */
-UCLASS()
+UCLASS(Config=Game)
 class DISCORDGAME_API UDiscordGameSubsystem : public UEngineSubsystem
 {
 	GENERATED_BODY()
@@ -130,6 +136,7 @@ protected:
 	 * To get your own Application ID:
 	 * @see https://discord.com/developers/applications
 	 */
+	UPROPERTY(Config, EditDefaultsOnly)
 	uint64 ClientId;
 
 	/**
@@ -148,6 +155,7 @@ protected:
 	 * Set this too high and it will take unreasonably long for the game to connect
 	 * to Discord if/when Discord starts after the game.
 	 */
+	UPROPERTY(Config, EditDefaultsOnly)
 	float CreateRetryTime;
 
 private:
