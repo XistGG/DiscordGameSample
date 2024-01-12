@@ -14,10 +14,11 @@ your Discord status will be updated to show that you're running the game.
 - Update the SDK to the latest (see [Updating Discord GameSDK](#updating-discord-gamesdk))
 - Copy the entire `Plugins/DiscordGame` folder into your project
 - Add `DiscordGame` to `PublicDependencyModuleNames` in your `Build.cs`
-- Create your own Custom Discord Game Subsystem, using `UCustomDiscordGameSubsystem`
+- Create your own Custom `DiscordGame`-derived Subsystem
+  - Use `UCustomDiscordGameSubsystem`
   { [h](./Source/DiscordGameSample/CustomDiscordGameSubsystem.h)
   | [cpp](./Source/DiscordGameSample/CustomDiscordGameSubsystem.cpp)
-  } as an example starting point
+  } as a starting point *(replace it with your own subsystem)*
 - Add whatever gameplay hooks you want, you're now online with Discord!
 
 ## Updating Discord GameSDK
@@ -40,7 +41,8 @@ plugin, which contains 2 modules:
 - Implements `DiscordGameSubsystem`
   { [h](./Plugins/DiscordGame/Source/DiscordGame/DiscordGameSubsystem.h) |
     [cpp](./Plugins/DiscordGame/Source/DiscordGame/DiscordGameSubsystem.cpp) }
-- Dynamically loads `DiscordGameSDK` at runtime (see [DiscordGame.cpp](./Plugins/DiscordGame/Source/DiscordGame/DiscordGame.cpp))
+- Dynamically loads `DiscordGameSDK` at runtime
+  - Loading managed by [DiscordGame.cpp](./Plugins/DiscordGame/Source/DiscordGame/DiscordGame.cpp)
   - DLL paths must be coordinated with [DiscordGameSDK.Build.cs](./Plugins/DiscordGame/Source/ThirdParty/DiscordGameSDK/DiscordGameSDK.Build.cs)
 
 ## `DiscordGameSDK` ThirdParty Module
@@ -49,8 +51,11 @@ plugin, which contains 2 modules:
 
 # Custom Discord Game Subsystem
 
-Though the underlying `UDiscordGameSubsystem` does all of the actual work of loading the SDK
-and managing the connection to the `DiscordCore`, it doesn't actually implement any gameplay behavior.
+- Intended to be replaced by your own custom implementation
+
+The underlying `UDiscordGameSubsystem` does all of the actual work of loading the SDK
+and managing the connection to the `DiscordCore`,
+but it doesn't actually implement any gameplay behavior.
 
 The `UCustomDiscordGameSubsystem`
 { [h](./Source/DiscordGameSample/CustomDiscordGameSubsystem.h)
@@ -62,6 +67,9 @@ where you will implement whatever behavior you want.
 In this case, it automatically sets the Discord Rich Presence
 as soon as we're able to connect to Discord, and it unsets it
 when the game ends.
+
+Note that you should **completely replace** `UCustomDiscordGameSubsystem` in your game
+with whatever custom subsystem you want.
 
 # Setup Part 1: Installing the SDK
 
