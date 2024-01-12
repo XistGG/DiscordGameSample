@@ -1,4 +1,4 @@
-// Copyright (c) 2024 xist.gg
+﻿// Copyright (c) 2024 xist.gg
 
 #pragma once
 
@@ -106,6 +106,17 @@ protected:
 	virtual void NativeOnDiscordCoreReset();
 
 	/**
+	 * Called every time we fail to connect to Discord.
+	 *
+	 * If you want to implement a more sophisticated error handling/retry system, for
+	 * example stopping the ticking after X number of failures etc, this is the place
+	 * to add that logic.
+	 *
+	 * @param Result The error result from discord::Core::Create
+	 */
+	virtual void NativeOnDiscordConnectError(discord::Result Result);
+
+	/**
 	 * This is registered as the Discord "Log Hook"
 	 *
 	 * Every message Discord wants to log is sent to this method.
@@ -197,5 +208,8 @@ private:
 
 	/** Amount of time (seconds) we will wait until trying to reconnect to Discord, if positive */
 	float RetryWaitRemaining {-1.f};
+
+	/** Toggles if/when we want to log connection errors (e.g. not repeatedly) */
+	bool bLogConnectionErrors {true};
 
 };

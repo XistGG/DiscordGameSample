@@ -1,4 +1,4 @@
-// Copyright (c) 2024 xist.gg
+﻿// Copyright (c) 2024 xist.gg
 
 #include "DiscordGameSubsystem.h"
 #include "DiscordGame.h"
@@ -17,7 +17,7 @@ bool UDiscordGameSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 	TArray<UClass*> ChildClasses;
 	GetDerivedClasses(GetClass(), OUT ChildClasses, false);
 
-	UE_LOG(LogDiscord, Log, TEXT("Found %i derived classes when attemping to create DiscordGameSubsystem (%s)"), ChildClasses.Num(), *GetClass()->GetName());
+	UE_LOG(LogDiscord, Verbose, TEXT("Found %i derived classes when attemping to create DiscordGameSubsystem (%s)"), ChildClasses.Num(), *GetClass()->GetName());
 
 	// Only create an instance if there is no override implementation defined elsewhere
 	return ChildClasses.Num() == 0;
@@ -45,9 +45,12 @@ void UDiscordGameSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 void UDiscordGameSubsystem::Deinitialize()
 {
+	// Stop ticking and reset the DiscordCore
 	SetTickEnabled(false);
 	ResetDiscordCore();
+
 	DiscordGameModule = nullptr;
+
 	Super::Deinitialize();
 }
 
@@ -60,10 +63,44 @@ void UDiscordGameSubsystem::NativeOnDiscordCoreCreated()
 		const FString Message (UTF8_TO_TCHAR(RawMessage));
 		NativeOnDiscordLogMessage(Level, Message);
 	});
+
+	// In case we get disconnected and we need to try to reconnect,
+	// make sure we'll log any future connection errors.
+	bLogConnectionErrors = true;
 }
 
 void UDiscordGameSubsystem::NativeOnDiscordCoreReset()
 {
+}
+
+void UDiscordGameSubsystem::NativeOnDiscordConnectError(discord::Result Result)
+{
+	switch (Result)
+	{
+	// The InternalError result is returned when the Discord App is not running.
+	case discord::Result::InternalError:
+		if (bLogConnectionErrors)
+		{
+			UE_LOG(LogDiscord, Warning, TEXT("Error(%i) Connecting to Discord; Discord App not running?"), Result);
+			// Suppress subsequent repeated log messages since we expect this to recur
+			// unless/until the Discord App is restarted by the player.
+			bLogConnectionErrors = false;
+		}
+		else
+		{
+			// This message may get written every 5 seconds FOREVER, so make it VeryVerbose.
+			// This way you can explicitly have it appear in the output log if you want,
+			// but otherwise it doesn't spam you with "Discord STILL isn't running" messages.
+			UE_LOG(LogDiscord, VeryVerbose, TEXT("Error(%i) Connecting to Discord; Discord App not running?"), Result);
+		}
+		break;
+
+	default:
+		// Not sure what this error is...  For now, spam the output log so you notice it.
+		// Once you determine exactly what it is, update this code to handle it appropriately.
+		UE_LOG(LogDiscord, Error, TEXT("Error(%i) Connecting to Discord; Unknown error"), Result);
+		break;
+	}
 }
 
 void UDiscordGameSubsystem::NativeOnDiscordLogMessage(discord::LogLevel Level, const FString& Message) const
@@ -71,17 +108,17 @@ void UDiscordGameSubsystem::NativeOnDiscordLogMessage(discord::LogLevel Level, c
 	switch (Level)
 	{
 	case discord::LogLevel::Debug:
-		UE_LOG(LogDiscord, Verbose, TEXT("%s"), *Message);
+		UE_LOG(LogDiscord, Verbose, TEXT("Discord Internal Debug: %s"), *Message);
 		break;
 	case discord::LogLevel::Info:
-		UE_LOG(LogDiscord, Log, TEXT("%s"), *Message);
+		UE_LOG(LogDiscord, Log, TEXT("Discord Internal Message: %s"), *Message);
 		break;
 	case discord::LogLevel::Warn:
-		UE_LOG(LogDiscord, Warning, TEXT("%s"), *Message);
+		UE_LOG(LogDiscord, Warning, TEXT("Discord Internal Warning: %s"), *Message);
 		break;
 	case discord::LogLevel::Error:
 	default:
-		UE_LOG(LogDiscord, Error, TEXT("%s"), *Message);
+		UE_LOG(LogDiscord, Error, TEXT("Discord Internal Error: %s"), *Message);
 		break;
 	}
 }
@@ -128,7 +165,7 @@ bool UDiscordGameSubsystem::Tick(float DeltaTime)
 		case discord::Result::NotRunning:
 			// Discord is no longer running, it is no longer usable and will never be again
 			// unless/until we successfully initialize a new DiscordCore. 
-			UE_LOG(LogDiscord, Error, TEXT("Error(%i) Running Callbacks; Discord is no longer running"), Result);
+			UE_LOG(LogDiscord, Warning, TEXT("Error(%i) Running Callbacks; Discord app is no longer running"), Result);
 			ResetDiscordCore();
 			break;
 
@@ -166,12 +203,8 @@ void UDiscordGameSubsystem::TryCreateDiscordCore(float DeltaTime)
 			NativeOnDiscordCoreCreated();
 			break;
 
-		case discord::Result::InternalError:
-			UE_LOG(LogDiscord, Error, TEXT("Error(%i) Creating Discord Core; Discord not running?"), Result);
-			break;
-
 		default:
-			UE_LOG(LogDiscord, Error, TEXT("Error(%i) Creating Discord Core"), Result);
+			NativeOnDiscordConnectError(Result);
 			break;
 		}
 
