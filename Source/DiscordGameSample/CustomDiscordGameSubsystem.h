@@ -11,6 +11,9 @@
  *
  * This is an example of how you can customize the base UDiscordGameSubsystem
  * to add your own functionality using the Discord GameSDK.
+ *
+ * NOTICE: YOU ARE EXPECTED TO REPLACE THIS CLASS WITH YOUR OWN CUSTOM
+ * IMPLEMENTATION. THIS CLASS IS PROVIDED PURELY AS AN EXAMPLE.
  */
 UCLASS()
 class DISCORDGAMESAMPLE_API UCustomDiscordGameSubsystem : public UDiscordGameSubsystem

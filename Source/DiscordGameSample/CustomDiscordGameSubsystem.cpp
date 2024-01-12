@@ -1,4 +1,7 @@
 ﻿// Copyright (c) 2024 xist.gg
+//
+// NOTICE: YOU ARE EXPECTED TO REPLACE THIS CLASS WITH YOUR OWN CUSTOM
+// IMPLEMENTATION. THIS CLASS IS PROVIDED PURELY AS AN EXAMPLE.
 
 #include "CustomDiscordGameSubsystem.h"
 
@@ -6,6 +9,10 @@ UCustomDiscordGameSubsystem::UCustomDiscordGameSubsystem()
 {
 	// Set your own custom Discord Application ID here:
 	ClientId = 1192487163825246269;
+
+	// Configure these as desired for your game:
+	MinimumLogLevel = discord::LogLevel::Debug;
+	CreateRetryTime = 5.0f;
 }
 
 void UCustomDiscordGameSubsystem::NativeOnDiscordCoreCreated()
