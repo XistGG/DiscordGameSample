@@ -49,6 +49,9 @@ Plugins/**/Binaries/*
 # Automatically generated Build files
 Build/Scripts/obj/*
 Build/Scripts/*.csproj.props
+Build/Mac/*.PackageVersionCounter
+Build/Mac/Resources/*.plist
+Build/Mac/Resources/*.entitlements
 
 # Built data for maps
 *_BuiltData.uasset
