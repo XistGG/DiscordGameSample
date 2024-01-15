@@ -2,7 +2,7 @@
 
 #include "DiscordGame.h"
 #include "Modules/ModuleManager.h"
-#include "Interfaces/IPluginManager.h"
+#include "Interfaces/IPluginManager.h"  // IWYU pragma: keep
 
 DEFINE_LOG_CATEGORY(LogDiscord);
 
@@ -46,7 +46,7 @@ FString FDiscordGameModule::GetPathToDLL() const
 	// Add on the relative location of the third party dll and load it
 	FString LibraryPath;
 
-#if WITH_EDITOR
+#if WITH_EDITOR && (PLATFORM_WINDOWS || PLATFORM_LINUX)
 
 	// When compiling as Editor, the SDK files DO NOT get copied to the Binaries directory,
 	// so we need to load them directly from the Source location.
@@ -56,18 +56,19 @@ FString FDiscordGameModule::GetPathToDLL() const
 
 #if PLATFORM_WINDOWS
 	LibraryPath = FPaths::Combine(*LibraryPath, TEXT("x86_64/discord_game_sdk.dll"));
-#elif PLATFORM_MAC && defined(__aarch64__) 
-	LibraryPath = FPaths::Combine(*LibraryPath, TEXT("aarch64/discord_game_sdk.dylib"));
-#elif PLATFORM_MAC
-	LibraryPath = FPaths::Combine(*LibraryPath, TEXT("x86_64/discord_game_sdk.dylib"));
 #elif PLATFORM_LINUX
-	LibraryPath = FPaths::Combine(*LibraryPath, TEXT("x86_64/discord_game_sdk.so"));
+    LibraryPath = FPaths::Combine(*LibraryPath, TEXT("x86_64/discord_game_sdk.so"));
+#else
+#error Unsupported platform
 #endif
 
 #else
 
 	// When compiling as Game, the build process copies the SDK DLLs to the Binaries directory,
 	// and from here they are packaged for distribution.
+	//
+	// Macs work a bit differently, they always package the DLLs in this way, even when
+	// compiling as Editor.
 
 	// Load DLLs from the distribution location.
 
@@ -80,6 +81,8 @@ FString FDiscordGameModule::GetPathToDLL() const
 	LibraryPath = FPaths::Combine(*LibraryPath, TEXT("Mac/discord_game_sdk.dylib"));
 #elif PLATFORM_LINUX
 	LibraryPath = FPaths::Combine(*LibraryPath, TEXT("Linux/discord_game_sdk.so"));
+#else
+#error Unsupported platform
 #endif
 
 #endif
