@@ -5,6 +5,10 @@ This is a sample game that integrates UE 5.3 with
 [Discord GameSDK](https://discord.com/developers/docs/game-sdk/sdk-starter-guide)
 v3.2.1.
 
+**Don't miss the
+[high level overview video](https://youtu.be/HBkw_AYeTJk)
+of this repository *(13 minutes)*.**
+
 To see this in action, build and run the game.
 As soon as the game (or UEditor) starts, if you have Discord running on your machine,
 your Discord status will be updated to show that you're running the game.
