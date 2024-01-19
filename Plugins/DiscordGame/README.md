@@ -1,7 +1,7 @@
 
 # DiscordGame Plugin
 
-This plugin is distributed in Xist's
+This plugin is distributed under an MIT license in Xist's
 [DiscordGameSample](https://github.com/XistGG/DiscordGameSample)
 
 See that repository for usage information and code updates.
