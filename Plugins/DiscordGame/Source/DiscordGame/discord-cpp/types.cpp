@@ -1,3 +1,9 @@
+//~Begin UE5 change
+#ifdef _MSC_VER
+#pragma warning(disable:4996)  // Disable warning: Function 'strncpy' is deprecated
+#endif
+//~End of UE5 change
+
 #if !defined(_CRT_SECURE_NO_WARNINGS)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
