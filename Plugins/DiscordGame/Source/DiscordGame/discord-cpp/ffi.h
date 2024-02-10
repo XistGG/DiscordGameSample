@@ -2,7 +2,10 @@
 #define _DISCORD_GAME_SDK_H_
 
 #ifdef _WIN32
-#include <Windows.h>
+//#include <Windows.h>  // Do not include bare Windows.h in UE5 projects
+#include "Windows/WindowsHWrapper.h"  // IWYU pragma: keep
+#include "ole2.h"  // IWYU pragma: keep
+#define COM_NO_WINDOWS_H 1  // Tell dxgi.h DO NOT include Windows.h (or ole2.h; which we explicitly included above)
 #include <dxgi.h>
 #endif
 
