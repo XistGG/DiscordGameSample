@@ -29,6 +29,8 @@ your Discord status will be updated to show that you're running the game.
 
 - [Setup Part 1: Installing the SDK](#setup-part-1-installing-the-sdk)
 - [Setup Part 2: Exporting the SDK](#setup-part-2-exporting-the-sdk)
+- [Setup Part 3: Silence UE5 Build Warnings](#setup-part-3-silence-ue5-build-warnings)
+- [Setup Part 4: Use UE5-safe Windows.h](#setup-part-4-use-ue5-safe-windowsh)
 
 ## Example Discord Status
 
@@ -146,16 +148,64 @@ LNK2019: unresolved external symbol "public: class discord::ActivityManager & __
 
 To fix these errors, execute [`ExportGameSDK.ps1`](./ExportGameSDK.ps1) and compile again.
 
-# Possible Compilation Warnings
+# Setup Part 3: Silence UE5 Build Warnings
 
-When you compile this, you may see a lot of warnings such as this:
+An optional *(recommended)* setup step is to silence the UE5 Win64 build warnings regarding the use of `strncpy`.
+
+The build will work without this step, but IMO it is annoying to see 20+ warnings every time you build.
+
+The fix is easy. You need to copy/paste 5 lines of code into `types.cpp`, which we previously copied
+into the `discord-cpp` directory from the SDK zip extraction.
+
+### Add this to [Plugins/DiscordGame/Source/DiscordGame/discord-cpp/types.cpp](./Plugins/DiscordGame/Source/DiscordGame/discord-cpp/types.cpp)
+
+```c++
+//~Begin UE5 change
+#ifdef _MSC_VER
+#pragma warning(disable:4996)  // Disable warning: Function 'strncpy' is deprecated
+#endif
+//~End of UE5 change
+```
+
+See
+[this commit](https://github.com/XistGG/DiscordGameSample/commit/e60c63fc7c15f2657a651cf5c0c5ee3e14129717),
+where I applied this setup step to `types.cpp` in this repository.
+
+## What are these Compilation Warnings
+
+The warnings look like this:
 
 ```text
 0>types.cpp(24): Warning C4996 : 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
 ```
 
-These warnings are due to Discord GameSDK being ultimately written in C and using C memory copy methodologies,
-which is generally not something you want to do in a C++ project.
+These warnings are due to Discord GameSDK being ultimately written in C and using old C memory copy methodologies,
+which is generally not something you want to do in a modern C++ project.
 
-This isn't really a problem as Discord has taken care to ensure that buffer overruns won't actually result from
+This isn't **really** a problem as Discord has taken care to ensure that buffer overruns won't actually result from
 using these methodologies. You can safely ignore these warnings.
+
+# Setup Part 4: Use UE5-safe Windows.h
+
+UE5 does not like to use `<Windows.h>` without a wrapper.
+
+Discord does use `<Windows.h>` and so it is preferred to modify that include to use the UE5 `WindowsHWrapper.h` instead.
+
+This is a relatively trivial change, but it is required to modify 2 files to effect it.
+
+See
+[this commit](https://github.com/XistGG/DiscordGameSample/commit/b6b63589f40bc288bdc8ef88d7e370f902faef66),
+where I applied this change.
+
+There are 2 required modifications:
+
+- In header `discord-cpp/ffi.h`
+  - DO NOT include `Windows.h`, instead include `Windows/WindowsHWrapper.h`
+  - DO include `ole2.h`, which we need.
+  - `#define COM_NO_WINDOWS_H 1` for `dxgi.h`
+    - This causes `dxgi.h` to NOT include `Windows.h`, which we want.
+    - It also causes `dxgi.h` to NOT include `ole2.h`, but we do need `ole2.h`, which is why we now explicitly include it.
+- In header `discord-cpp/types.h`
+  - DO NOT include `Windows.h` or `dxgi.h`
+    - These are both already included by `discord-cpp/ffi.h`
+    - Rather than apply the same fix here as we did to `discord-cpp/ffi.h`, we just remove these duplicate includes.
