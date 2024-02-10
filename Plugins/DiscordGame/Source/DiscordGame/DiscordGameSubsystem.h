@@ -6,6 +6,8 @@
 #include "discord-cpp/discord.h"
 #include "DiscordGame.h"
 #include "Subsystems/EngineSubsystem.h"
+#include "Engine/Engine.h"
+#include "Containers/Ticker.h"
 #include "DiscordGameSubsystem.generated.h"
 
 /**
