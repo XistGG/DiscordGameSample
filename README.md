@@ -1,7 +1,7 @@
 
 # DiscordGameSample
 
-This is a sample game that integrates UE 5.3 with
+This is a sample game that integrates UE 5.6 with
 [Discord GameSDK](https://discord.com/developers/docs/game-sdk/sdk-starter-guide)
 v3.2.1.
 
@@ -108,7 +108,7 @@ as a result of you executing binaries that you downloaded from the Internet.
 After you install the latest SDK, you also need to export all of the classes so you can use them in
 other UE5 modules.
 
-You can do this manually, however I created a simple PowerShell script
+You can do this manually, though I created a simple PowerShell script
 ([ExportGameSDK.ps1](./ExportGameSDK.ps1))
 to automate this process.
 
